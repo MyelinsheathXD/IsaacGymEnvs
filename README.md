@@ -1,3 +1,5 @@
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.conda/envs/gym/lib
+
 # Isaac Gym Benchmark Environments
 
 [Website](https://developer.nvidia.com/isaac-gym) | [Technical Paper](https://arxiv.org/abs/2108.10470) | [Videos](https://sites.google.com/view/isaacgym-nvidia)
