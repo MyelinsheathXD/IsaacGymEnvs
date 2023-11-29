@@ -1,0 +1,7 @@
+runs/Humanoid_29-19-33-02/nn/last_Humanoid_ep_1000_rew__7137.56_.pth
+
+python train.py task=Humanoid checkpoint=runs/Humanoid_29-19-33-02/nn/last_Humanoid_ep_1000_rew__7137.56_.pth +num_env=2 test=True
+
+
+
+python train.py task=Humanoid checkpoint=runs/Humanoid_29-19-33-02/nn/last_Humanoid_ep_1000_rew__7137.56_.pth task.env.numEnvs=2 test=True pipeline=cpu
