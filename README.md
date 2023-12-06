@@ -2,6 +2,17 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.conda/envs/gym/lib
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.conda/envs/gymAMP/lib
 
+
+
+
+
+
+
+
+
+
+python train.py task=Ant test=True task.env.numEnvs=4 checkpoint=runs/Ant_05-19-35-44/nn/last_Ant_ep_500_rew__6603.7_.pth
+
 # Isaac Gym Benchmark Environments
 
 [Website](https://developer.nvidia.com/isaac-gym) | [Technical Paper](https://arxiv.org/abs/2108.10470) | [Videos](https://sites.google.com/view/isaacgym-nvidia)

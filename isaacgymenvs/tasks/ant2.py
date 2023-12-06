@@ -64,8 +64,8 @@ class Ant2(VecTask):
         self.plane_dynamic_friction = self.cfg["env"]["plane"]["dynamicFriction"]
         self.plane_restitution = self.cfg["env"]["plane"]["restitution"]
 
-        self.cfg["env"]["numObservations"] = 60
-        self.cfg["env"]["numActions"] = 8
+        self.cfg["env"]["numObservations"] = 72  #60
+        self.cfg["env"]["numActions"] = 12  #12 _8
 
         super().__init__(config=self.cfg, rl_device=rl_device, sim_device=sim_device, graphics_device_id=graphics_device_id, headless=headless, virtual_screen_capture=virtual_screen_capture, force_render=force_render)
 
@@ -78,9 +78,12 @@ class Ant2(VecTask):
         actor_root_state = self.gym.acquire_actor_root_state_tensor(self.sim)
         dof_state_tensor = self.gym.acquire_dof_state_tensor(self.sim)
         sensor_tensor = self.gym.acquire_force_sensor_tensor(self.sim)
-
-        sensors_per_env = 4
-        self.vec_sensor_tensor = gymtorch.wrap_tensor(sensor_tensor).view(self.num_envs, sensors_per_env * 6)
+        print(f'___________________________sensor acquire_actor_root_state_tensor__ {actor_root_state.shape}')
+        print(f'___________________________sensor dof_state_tensoracquire_actor_root_state_tensor__ {dof_state_tensor.shape}')
+        print(f'___________________________sensor tensor___________________ {sensor_tensor.shape}')
+        ##print(f'___________________________sensor tensor___________________ {sensor_tensor.shape}')
+        sensors_per_env = 4 #8_4
+        self.vec_sensor_tensor = gymtorch.wrap_tensor(sensor_tensor).view(self.num_envs, sensors_per_env * 6) #6
 
         self.gym.refresh_dof_state_tensor(self.sim)
         self.gym.refresh_actor_root_state_tensor(self.sim)
@@ -161,7 +164,7 @@ class Ant2(VecTask):
         self.joint_gears = to_torch(motor_efforts, device=self.device)
 
         start_pose = gymapi.Transform()
-        start_pose.p = gymapi.Vec3(*get_axis_params(0.44, self.up_axis_idx))
+        start_pose.p = gymapi.Vec3(*get_axis_params(1.44, self.up_axis_idx))
 
         self.start_rotation = torch.tensor([start_pose.r.x, start_pose.r.y, start_pose.r.z, start_pose.r.w], device=self.device)
 
@@ -173,6 +176,7 @@ class Ant2(VecTask):
 
         # create force sensors attached to the "feet"
         extremity_indices = [self.gym.find_asset_rigid_body_index(ant_asset, name) for name in extremity_names]
+        print(f'___________________________sensor force extremity indices__ {extremity_indices}')
         sensor_pose = gymapi.Transform()
         for body_idx in extremity_indices:
             self.gym.create_asset_force_sensor(ant_asset, body_idx, sensor_pose)
@@ -293,7 +297,7 @@ class Ant2(VecTask):
             self.reset_idx(env_ids)
 
         self.compute_observations()
-        self.compute_reward(self.actions)
+        #self.compute_reward(self.actions)
         self.compute_true_objective()
 
         # debug viz
