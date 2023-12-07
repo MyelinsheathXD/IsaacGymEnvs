@@ -297,7 +297,7 @@ class Ant2(VecTask):
             self.reset_idx(env_ids)
 
         self.compute_observations()
-        #self.compute_reward(self.actions)
+        self.compute_reward(self.actions)
         self.compute_true_objective()
 
         # debug viz
@@ -354,9 +354,10 @@ def compute_ant_reward(
     up_reward = torch.where(obs_buf[:, 10] > 0.93, up_reward + up_weight, up_reward)
 
     # energy penalty for movement
+    #print(f'____shape observe buffeer{obs_buf.shape}')
     actions_cost = torch.sum(actions ** 2, dim=-1)
-    electricity_cost = torch.sum(torch.abs(actions * obs_buf[:, 20:28]), dim=-1)
-    dof_at_limit_cost = torch.sum(obs_buf[:, 12:20] > 0.99, dim=-1)
+    electricity_cost = torch.sum(torch.abs(actions * obs_buf[:, 20:32]), dim=-1) #(actions * obs_buf[:, 20:28]), dim=-1)
+    dof_at_limit_cost = torch.sum(obs_buf[:, 12:24] > 0.99, dim=-1) #(obs_buf[:, 12:20] > 0.99, dim=-1)
 
     # reward for duration of staying alive
     alive_reward = torch.ones_like(potentials) * 0.5

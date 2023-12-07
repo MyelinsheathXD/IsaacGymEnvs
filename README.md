@@ -12,6 +12,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.conda/envs/gymAMP/lib
 
 
 python train.py task=Ant test=True task.env.numEnvs=4 checkpoint=runs/Ant_05-19-35-44/nn/last_Ant_ep_500_rew__6603.7_.pth
+python train.py task=Ant2 test=True task.env.numEnvs=4 checkpoint=runs/Ant_07-08-49-37/nn/last_Ant_ep_500_rew__4112.49_.pth
 
 # Isaac Gym Benchmark Environments
 
