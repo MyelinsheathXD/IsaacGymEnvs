@@ -26,6 +26,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
+from isaacgymenvs.tasks.antDir import AntDir
 from isaacgymenvs.tasks.ant2 import Ant2
 from .ant import Ant
 from .anymal import Anymal
@@ -113,4 +115,5 @@ isaacgym_task_map = {
     "ShadowHand": ShadowHand,
     "Trifinger": Trifinger,
     "Ant2": Ant2,
+    "AntDir": AntDir,
 }
