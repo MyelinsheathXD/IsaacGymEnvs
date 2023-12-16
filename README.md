@@ -2,7 +2,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.conda/envs/gym/lib
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/.conda/envs/gymAMP/lib
 
-
+https://github.com/Unity-Technologies/ml-agents/issues/5956
 
 
 
