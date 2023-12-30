@@ -37,6 +37,9 @@ from isaacgym.gymtorch import *
 from isaacgymenvs.utils.torch_jit_utils import *
 from isaacgymenvs.tasks.base.vec_task import VecTask
 
+#random integer
+from random import randint
+import random
 
 class AntDir(VecTask):
 
@@ -107,11 +110,26 @@ class AntDir(VecTask):
         self.basis_vec0 = self.heading_vec.clone()
         self.basis_vec1 = self.up_vec.clone()
 
-        self.targets = to_torch([-1000, 10, 0], device=self.device).repeat((self.num_envs, 1))
+        #self.targets = to_torch([-1000, 10, 0], device=self.device).repeat((self.num_envs, 1))
+        self.targets = to_torch(self.getRanfloatFlat2d(), device=self.device).repeat((self.num_envs, 1))
         self.target_dirs = to_torch([1, 0, 0], device=self.device).repeat((self.num_envs, 1))
         self.dt = self.cfg["sim"]["dt"]
         self.potentials = to_torch([-1000./self.dt], device=self.device).repeat(self.num_envs)
         self.prev_potentials = self.potentials.clone()
+
+        #random 2 d vectors 
+        #self.directionPoints= to_torch(torch.FloatTensor(10, 3).uniform_(0.0, 1.0).normal_(mean=1.0)*200, device=self.device)
+        self.directionPoints= to_torch(torch.rand(100, 3).uniform_(-1.0, 1.0)*500, device=self.device)
+        self.directionPoints[:, 2] = 0.0
+        #self.targets = to_torch(self.getRanfloatFlat2d(), device=self.device).repeat((self.num_envs, 1))
+    def getRanfloatFlat2d(self):
+
+        a= random.uniform(-1.0, 1.0)
+        b=random.uniform(-1.0, 1.0)
+        c=abs(a)+abs(b)
+        s=1000
+        f=[a*s/c,b*s/c,0.0]
+        return f
 
     def create_sim(self):
         self.up_axis_idx = 2 # index of up axis: Y=1, Z=2
@@ -269,6 +287,9 @@ class AntDir(VecTask):
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_state),
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
+        
+        #randomize target
+        self.targets[env_ids]=self.directionPoints[randint(0,  self.directionPoints.size(dim=0)-1)]
 
         to_target = self.targets[env_ids] - self.initial_root_states[env_ids, 0:3]
         to_target[:, 2] = 0.0
@@ -277,6 +298,9 @@ class AntDir(VecTask):
 
         self.progress_buf[env_ids] = 0
         self.reset_buf[env_ids] = 0
+
+        #random point from diretion points tensor on GPU
+        #self.targets[env_ids]=self.directionPoints[randint(0,  self.directionPoints.size(dim=0)-1)]
 
     def pre_physics_step(self, actions):
         self.actions = actions.clone().to(self.device)
