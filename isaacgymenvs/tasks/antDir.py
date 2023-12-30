@@ -107,7 +107,7 @@ class AntDir(VecTask):
         self.basis_vec0 = self.heading_vec.clone()
         self.basis_vec1 = self.up_vec.clone()
 
-        self.targets = to_torch([1000, 0, 0], device=self.device).repeat((self.num_envs, 1))
+        self.targets = to_torch([-1000, 10, 0], device=self.device).repeat((self.num_envs, 1))
         self.target_dirs = to_torch([1, 0, 0], device=self.device).repeat((self.num_envs, 1))
         self.dt = self.cfg["sim"]["dt"]
         self.potentials = to_torch([-1000./self.dt], device=self.device).repeat(self.num_envs)
@@ -314,6 +314,15 @@ class AntDir(VecTask):
                 points.append([glob_pos.x, glob_pos.y, glob_pos.z, glob_pos.x + 4 * self.up_vec[i, 0].cpu().numpy(), glob_pos.y + 4 * self.up_vec[i, 1].cpu().numpy(),
                                glob_pos.z + 4 * self.up_vec[i, 2].cpu().numpy()])
                 colors.append([0.05, 0.99, 0.04])
+
+
+                #origin1 = self.targets(self.envs[i])
+                #pose1 = self.root_states[:, 0:3][i].cpu().numpy()
+                pose1 = self.targets[:, 0:3][i].cpu().numpy()
+                glob_pos2 = gymapi.Vec3(pose1[0],  pose1[1],  pose1[2])
+
+                points.append([glob_pos.x, glob_pos.y, glob_pos.z, glob_pos2.x, glob_pos2.y, glob_pos2.z])
+                colors.append([0.05, 0.99, 0.94])
 
             self.gym.add_lines(self.viewer, None, self.num_envs * 2, points, colors)
 
