@@ -70,6 +70,9 @@ class AntDir(VecTask):
         self.cfg["env"]["numObservations"] = 60
         self.cfg["env"]["numActions"] = 8
 
+
+        self.timerDirectionChange=0.0
+
         super().__init__(config=self.cfg, rl_device=rl_device, sim_device=sim_device, graphics_device_id=graphics_device_id, headless=headless, virtual_screen_capture=virtual_screen_capture, force_render=force_render)
 
         if self.viewer != None:
@@ -117,17 +120,19 @@ class AntDir(VecTask):
         self.potentials = to_torch([-1000./self.dt], device=self.device).repeat(self.num_envs)
         self.prev_potentials = self.potentials.clone()
 
-        #random 2 d vectors 
+        #random 2d vectors 
         #self.directionPoints= to_torch(torch.FloatTensor(10, 3).uniform_(0.0, 1.0).normal_(mean=1.0)*200, device=self.device)
-        self.directionPoints= to_torch(torch.rand(100, 3).uniform_(-1.0, 1.0)*500, device=self.device)
+        self.directionPoints= to_torch(torch.rand(100, 3).uniform_(-1.0, 1.0)*10, device=self.device)
         self.directionPoints[:, 2] = 0.0
         #self.targets = to_torch(self.getRanfloatFlat2d(), device=self.device).repeat((self.num_envs, 1))
+
+
     def getRanfloatFlat2d(self):
 
         a= random.uniform(-1.0, 1.0)
         b=random.uniform(-1.0, 1.0)
         c=abs(a)+abs(b)
-        s=1000
+        s=10
         f=[a*s/c,b*s/c,0.0]
         return f
 
@@ -244,7 +249,9 @@ class AntDir(VecTask):
             self.joints_at_limit_cost_scale,
             self.termination_height,
             self.death_cost,
-            self.max_episode_length
+            self.max_episode_length,
+            self.targets,
+            self.root_states
         )
 
     def compute_observations(self):
@@ -289,7 +296,7 @@ class AntDir(VecTask):
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
         
         #randomize target
-        self.targets[env_ids]=self.directionPoints[randint(0,  self.directionPoints.size(dim=0)-1)]
+        #self.targets[env_ids]=self.directionPoints[randint(0,  self.directionPoints.size(dim=0)-1)]
 
         to_target = self.targets[env_ids] - self.initial_root_states[env_ids, 0:3]
         to_target[:, 2] = 0.0
@@ -350,6 +357,17 @@ class AntDir(VecTask):
 
             self.gym.add_lines(self.viewer, None, self.num_envs * 2, points, colors)
 
+        #timer for change direction
+        # self.timerDirectionChange+=1
+        # if  (self.timerDirectionChange>6.0*30):
+        #     self.timerDirectionChange=0.0
+        #     for i in range (self.num_envs) :
+        #         self.targets[i]=self.directionPoints[randint(0,  self.directionPoints.size(dim=0)-1)]
+
+
+
+
+        
 #####################################################################
 ###=========================jit functions=========================###
 #####################################################################
@@ -370,9 +388,11 @@ def compute_ant_reward(
     joints_at_limit_cost_scale,
     termination_height,
     death_cost,
-    max_episode_length
+    max_episode_length,
+    root_states,
+    targets,
 ):
-    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float) -> Tuple[Tensor, Tensor]
+    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, Tensor, Tensor) -> Tuple[Tensor, Tensor]
 
     # reward from direction headed
     heading_weight_tensor = torch.ones_like(obs_buf[:, 11]) * heading_weight
@@ -390,6 +410,15 @@ def compute_ant_reward(
     # reward for duration of staying alive
     alive_reward = torch.ones_like(potentials) * 0.5
     progress_reward = potentials - prev_potentials
+
+
+    #reward or distance of target
+    torso_position = root_states[:, 0:3]
+    Dis_targetVector = (targets - torso_position)
+    #Dis_targetlength= Dis_targetVector*(Dis_targetVector**-1)
+    #Reach_reward=torch.where(Dis_targetlength[:, 0:1] <1.03, 1.0, 0.0)
+
+
 
     total_reward = progress_reward + alive_reward + up_reward + heading_reward - \
         actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale

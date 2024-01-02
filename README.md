@@ -14,7 +14,12 @@ https://github.com/Unity-Technologies/ml-agents/issues/5956
 python train.py task=Ant test=True task.env.numEnvs=4 checkpoint=runs/Ant_05-19-35-44/nn/last_Ant_ep_500_rew__6603.7_.pth
 python train.py task=Ant2 test=True task.env.numEnvs=4 checkpoint=runs/Ant_07-08-49-37/nn/last_Ant_ep_500_rew__4112.49_.pth
 python train.py task=AntDir test=True task.env.numEnvs=4 checkpoint=runs/Ant_15-16-17-03/nn/last_Ant_ep_100_rew__2557.83_.pth
-python train.py task=AntDir test=True task.env.numEnvs=4 checkpoint=runs/Ant_29-16-22-40/nn/last_Ant_ep_500_rew__6603.7_.pth
+python train.py task=AntDir test=True task.env.numEnvs=8 checkpoint=runs/Ant_30-22-56-49/nn/last_Ant_ep_500_rew__5150.63_.pth
+python train.py task=Cartpole2 test=True task.env.numEnvs=8 checkpoint=runs/Cartpole_02-12-58-02/nn/last_Cartpole_ep_100_rew_491.5027.pth
+
+
+
+
 
 # Isaac Gym Benchmark Environments
 
