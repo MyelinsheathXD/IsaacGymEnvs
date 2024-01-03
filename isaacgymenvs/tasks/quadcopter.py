@@ -341,6 +341,8 @@ class Quadcopter(VecTask):
 
         # debug viz
         if self.viewer and self.debug_viz:
+
+            self.gym.clear_lines(self.viewer)
             # compute start and end positions for visualizing thrust lines
             self.gym.refresh_rigid_body_state_tensor(self.sim)
             rotor_indices = torch.LongTensor([2, 4, 6, 8])
@@ -353,7 +355,8 @@ class Quadcopter(VecTask):
             verts = torch.stack([starts, ends], dim=2).cpu().numpy()
             colors = np.zeros((self.num_envs * 4, 3), dtype=np.float32)
             colors[..., 0] = 1.0
-            self.gym.clear_lines(self.viewer)
+            colors[..., 1] = 1.0
+            #self.gym.clear_lines(self.viewer)
             self.gym.add_lines(self.viewer, None, self.num_envs * 4, verts, colors)
 
     def compute_observations(self):

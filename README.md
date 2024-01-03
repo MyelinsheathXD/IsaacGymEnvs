@@ -16,6 +16,7 @@ python train.py task=Ant2 test=True task.env.numEnvs=4 checkpoint=runs/Ant_07-08
 python train.py task=AntDir test=True task.env.numEnvs=4 checkpoint=runs/Ant_15-16-17-03/nn/last_Ant_ep_100_rew__2557.83_.pth
 python train.py task=AntDir test=True task.env.numEnvs=8 checkpoint=runs/Ant_30-22-56-49/nn/last_Ant_ep_500_rew__5150.63_.pth
 python train.py task=Cartpole2 test=True task.env.numEnvs=8 checkpoint=runs/Cartpole_02-12-58-02/nn/last_Cartpole_ep_100_rew_491.5027.pth
+python train.py task=Quadcopter test=True task.env.numEnvs=8 checkpoint=runs/Quadcopter_03-13-59-34/nn/last_Quadcopter_ep_500_rew__1146.69_.pth
 
 
 
